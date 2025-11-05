@@ -4,17 +4,18 @@ import AppHeader from '../components/AppHeader';
 import ButtonPrimary from '../components/ButtonPrimary';
 import Loader from '../components/Loader';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useDeviceId } from '../hooks/useDeviceId';
 import { useFingerprintAuth } from '../hooks/useFingerprintAuth';
 import voterService from '../services/voterService';
+import { getDeviceId } from '../utils/deviceUtils';
 
 export default function ConfirmScreen() {
   const { cnic, na, pp } = useLocalSearchParams();
   const router = useRouter();
-  const deviceId = useDeviceId();
+  const deviceId = getDeviceId();
   const { authenticate } = useFingerprintAuth();
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(cnic,na,pp,deviceId);
+  
   const onCastVote = async () => {
     const ok = await authenticate('Authenticate to cast your vote');
     if (!ok) return alert('Fingerprint failed');

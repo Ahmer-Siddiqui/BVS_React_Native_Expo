@@ -11,31 +11,17 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function CandidatesScreen() {
   const { cnic } = useLocalSearchParams();
-  const { candidates, isLoading,message } = useSelector((state) => state.candidate);
+  const { candidates, isLoading, message, success } = useSelector(
+    (state) => state.candidate
+  );
   const dispatch = useDispatch();
   const router = useRouter();
   const [selection, setSelection] = useState({ NA: null, PP: null });
 
   useEffect(() => {
     if (!cnic) return;
-    fetchCandidateHandler();
+    dispatch(fetchCandidates(cnic));
   }, [cnic]);
-
-  const fetchCandidateHandler = async () => {
-    try {
-      dispatch(fetchCandidates(cnic));
-      // If voter not registered or no voterStation assigned, backend returns error -> route to register
-      // if (!res.success || !res.candidates) {
-      //   // router.push(`/register?cnic=${cnic}`);
-      //   return;
-      // }
-      // setCandidates(res.candidates || []);
-    } catch (err) {
-      console.log(err);
-      // likely not registered
-      // router.push(`/register?cnic=${cnic}`);
-    }
-  };
 
   const toggleSelect = (item) => {
     setSelection((prev) => {
@@ -57,6 +43,9 @@ export default function CandidatesScreen() {
     }).toString();
     router.push(`/confirm?${params}`);
   };
+  useEffect(() => {
+    if (message && !success) alert(`${message}`);
+  }, [success, message]);
 
   if (isLoading) return <Loader />;
 

@@ -2,15 +2,16 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import AppHeader from '../components/AppHeader';
 import ButtonPrimary from '../components/ButtonPrimary';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function SuccessScreen() {
   const router = useRouter();
+  const { message } = useLocalSearchParams();
   return (
     <View style={styles.container}>
       <AppHeader title="Success" />
       <View style={styles.body}>
-        <Text style={styles.title}>Vote Cast Successfully 🎉</Text>
+        <Text style={styles.title}>{message || "Vote Cast Successfully 🎉"}</Text>
         <ButtonPrimary title="Back to Home" onPress={() => router.push('/')} />
       </View>
     </View>

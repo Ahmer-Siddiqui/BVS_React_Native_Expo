@@ -35,16 +35,20 @@ const candidateSlice = createSlice({
     builder
       .addCase(fetchCandidates.pending, (s) => {
         s.isLoading = true;
-        s.error = null;
+        s.error = false;
+        s.success = false;
       })
       .addCase(fetchCandidates.fulfilled, (s, a) => {
-        s.candidates = a.payload?.data?.candidates
+        s.candidates = a.payload?.data?.candidates;
+        s.success = true;
+        s.error = false;
         s.isLoading = false;
-        s.list = a.payload;
       })
       .addCase(fetchCandidates.rejected, (s, a) => {
+        s.message = a.payload;
+        s.success = false;
         s.isLoading = false;
-        s.error = a.error.message;
+        s.error = true;
       });
   },
 });
