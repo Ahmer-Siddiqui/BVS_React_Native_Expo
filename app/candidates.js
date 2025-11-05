@@ -5,36 +5,36 @@ import CandidateCard from '../components/CandidateCard';
 import Loader from '../components/Loader';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import candidateService from '../services/candidateService';
+import {fetchCandidates} from '../redux/candidateSlice';
 import ButtonPrimary from '../components/ButtonPrimary';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function CandidatesScreen() {
   const { cnic } = useLocalSearchParams();
-  
+  const {candidates,isLoading} = useSelector((state) => state.candidate)
+  const dispatch = useDispatch();
   const router = useRouter();
-  const [candidates, setCandidates] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [selection, setSelection] = useState({ NA: null, PP: null });  
 
   useEffect(() => {
     if (!cnic) return;
-    fetchCandidates();
+    fetchCandidateHandler();
   }, [cnic]);
-
-  const fetchCandidates = async () => {
+  
+  const fetchCandidateHandler = async () => {
     try {
-      setIsLoading(true);
-      const res = await candidateService.getCandidates(cnic);
-      setIsLoading(false);
+      dispatch(fetchCandidates(cnic))
       // If voter not registered or no voterStation assigned, backend returns error -> route to register
-      if (!res || !res.candidates) {
-        router.push(`/register?cnic=${cnic}`);
-        return;
-      }
-      setCandidates(res.candidates || []);
+      // if (!res.success || !res.candidates) {
+      //   // router.push(`/register?cnic=${cnic}`);
+      //   return;
+      // }
+      // setCandidates(res.candidates || []);
     } catch (err) {
-      setIsLoading(false);
+      console.log(err);
+      
       // likely not registered
-      router.push(`/register?cnic=${cnic}`);
+      // router.push(`/register?cnic=${cnic}`);
     }
   };
 

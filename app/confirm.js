@@ -3,13 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import AppHeader from '../components/AppHeader';
 import ButtonPrimary from '../components/ButtonPrimary';
 import Loader from '../components/Loader';
-import { useSearchParams, useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useDeviceId } from '../hooks/useDeviceId';
 import { useFingerprintAuth } from '../hooks/useFingerprintAuth';
 import voterService from '../services/voterService';
 
 export default function ConfirmScreen() {
-  const { cnic, na, pp } = useSearchParams();
+  const { cnic, na, pp } = useLocalSearchParams();
   const router = useRouter();
   const deviceId = useDeviceId();
   const { authenticate } = useFingerprintAuth();
