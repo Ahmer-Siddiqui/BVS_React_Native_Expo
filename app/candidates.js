@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import AppHeader from '../components/AppHeader';
-import CandidateCard from '../components/CandidateCard';
-import Loader from '../components/Loader';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import candidateService from '../services/candidateService';
-import {fetchCandidates} from '../redux/candidateSlice';
-import ButtonPrimary from '../components/ButtonPrimary';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import AppHeader from "../components/AppHeader";
+import CandidateCard from "../components/CandidateCard";
+import Loader from "../components/Loader";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import candidateService from "../services/candidateService";
+import { fetchCandidates } from "../redux/candidateSlice";
+import ButtonPrimary from "../components/ButtonPrimary";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function CandidatesScreen() {
   const { cnic } = useLocalSearchParams();
-  const {candidates,isLoading} = useSelector((state) => state.candidate)
+  const { candidates, isLoading,message } = useSelector((state) => state.candidate);
   const dispatch = useDispatch();
   const router = useRouter();
-  const [selection, setSelection] = useState({ NA: null, PP: null });  
+  const [selection, setSelection] = useState({ NA: null, PP: null });
 
   useEffect(() => {
     if (!cnic) return;
     fetchCandidateHandler();
   }, [cnic]);
-  
+
   const fetchCandidateHandler = async () => {
     try {
-      dispatch(fetchCandidates(cnic))
+      dispatch(fetchCandidates(cnic));
       // If voter not registered or no voterStation assigned, backend returns error -> route to register
       // if (!res.success || !res.candidates) {
       //   // router.push(`/register?cnic=${cnic}`);
@@ -32,7 +32,6 @@ export default function CandidatesScreen() {
       // setCandidates(res.candidates || []);
     } catch (err) {
       console.log(err);
-      
       // likely not registered
       // router.push(`/register?cnic=${cnic}`);
     }
@@ -48,9 +47,14 @@ export default function CandidatesScreen() {
 
   const onConfirm = () => {
     // must select one NA and one PP
-    if (!selection.NA || !selection.PP) return alert('Select one candidate for NA and one for PP');
+    if (!selection.NA || !selection.PP)
+      return alert("Select one candidate for NA and one for PP");
     // navigate to confirm screen with selections
-    const params = new URLSearchParams({ cnic, na: selection.NA, pp: selection.PP }).toString();
+    const params = new URLSearchParams({
+      cnic,
+      na: selection.NA,
+      pp: selection.PP,
+    }).toString();
     router.push(`/confirm?${params}`);
   };
 
@@ -60,12 +64,18 @@ export default function CandidatesScreen() {
     <View style={styles.container}>
       <AppHeader title="Candidates" />
       <View style={styles.body}>
-        <Text style={styles.instructions}>Select 1 candidate for NA and 1 for PP</Text>
+        <Text style={styles.instructions}>
+          Select 1 candidate for NA and 1 for PP
+        </Text>
         <FlatList
           data={candidates}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <CandidateCard item={item} selected={selection[item.position] === item._id} onPress={() => toggleSelect(item)} />
+            <CandidateCard
+              item={item}
+              selected={selection[item.position] === item._id}
+              onPress={() => toggleSelect(item)}
+            />
           )}
           ListEmptyComponent={<Text>No candidates found.</Text>}
         />
@@ -76,7 +86,7 @@ export default function CandidatesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: "#fff" },
   body: { padding: 16 },
-  instructions: { fontSize: 14, marginBottom: 12 }
+  instructions: { fontSize: 14, marginBottom: 12 },
 });

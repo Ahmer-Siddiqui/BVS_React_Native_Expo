@@ -10,6 +10,10 @@ export const voteCasting = createAsyncThunk('voter/voteCasting', async (payload,
   const res = await voterService.voteCasting(payload);
   return res;
 });
+export const cnicVerification = createAsyncThunk('voter/cnic-verification', async (payload, thunkAPI) => {
+  const res = await voterService.cnicVerification(payload);
+  return res;
+});
 
 const voterSlice = createSlice({
   name: 'voter',
@@ -29,6 +33,9 @@ const voterSlice = createSlice({
       .addCase(voteCasting.pending, (s) => { s.isLoading = true; s.error = null; })
       .addCase(voteCasting.fulfilled, (s, a) => { s.isLoading = false; })
       .addCase(voteCasting.rejected, (s, a) => { s.isLoading = false; s.error = a.error.message; });
+      .addCase(cnicVerification.pending, (s) => { s.isLoading = true; s.error = null; })
+      .addCase(cnicVerification.fulfilled, (s, a) => { s.isLoading = false; })
+      .addCase(cnicVerification.rejected, (s, a) => { s.isLoading = false; s.error = a.error.message; });
   }
 });
 

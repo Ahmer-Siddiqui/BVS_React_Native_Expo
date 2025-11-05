@@ -14,6 +14,10 @@ const voterService = {
   uploadAsset: async (payload) => {
     const res = await apiClient.post('/voter/upload-file', payload);
     return res;
+  },
+  cnicVerification: async (payload) => {
+    const res = await apiClient.post('/voter/cnic-verification', payload);
+    return res;
   }
 };
 
