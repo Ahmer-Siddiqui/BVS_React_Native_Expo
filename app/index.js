@@ -11,8 +11,8 @@ export default function HomeScreen() {
 
   const onCheck = () => {
     // navigate to candidates screen which will call API
-    if (!cnic || cnic.length < 13) {
-      alert('Please enter a valid 13-digit CNIC number');
+    if (!cnic || cnic.length < 15) {
+      alert('Please enter a valid 15-digit CNIC number like 11111-1111111-1');
       return;
     }
     router.push(`/candidates?cnic=${cnic}`);
@@ -20,7 +20,7 @@ export default function HomeScreen() {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <AppHeader title="Voter App" />
+      <AppHeader title="Voter Verification" />
       <View style={styles.body}>
         <Text style={styles.label}>Enter CNIC Number</Text>
         <InputField value={cnic} onChangeText={setCnic} placeholder="e.g. 1234512345671" keyboardType="numeric" />

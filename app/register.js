@@ -7,11 +7,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { useDeviceId } from '../hooks/useDeviceId';
 import { useFingerprintAuth } from '../hooks/useFingerprintAuth';
 import voterService from '../services/voterService';
-import { useRouter, useSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Loader from '../components/Loader';
 
 export default function RegisterScreen() {
-  const { cnic } = useSearchParams();
+  const { cnic } = useLocalSearchParams();
   const router = useRouter();
   const [cnicImage, setCnicImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

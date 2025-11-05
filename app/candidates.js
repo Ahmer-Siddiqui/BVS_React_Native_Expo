@@ -3,16 +3,17 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import AppHeader from '../components/AppHeader';
 import CandidateCard from '../components/CandidateCard';
 import Loader from '../components/Loader';
-import { useSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import candidateService from '../services/candidateService';
 import ButtonPrimary from '../components/ButtonPrimary';
 
 export default function CandidatesScreen() {
-  const { cnic } = useSearchParams();
+  const { cnic } = useLocalSearchParams();
+  
   const router = useRouter();
   const [candidates, setCandidates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selection, setSelection] = useState({ NA: null, PP: null });
+  const [selection, setSelection] = useState({ NA: null, PP: null });  
 
   useEffect(() => {
     if (!cnic) return;
