@@ -32,14 +32,14 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    console.log(message);
+    if (!success && message) alert(message);
 
     if (message?.includes("already") && message?.includes("cast")) {
       alert(`${message}`);
       router.push(`/success?message=${message}`);
       return;
     }
-    if (message && !success) {
+    if (message?.includes("register") && !success) {
       alert(`${message}`);
       router.push(`/register?cnic=${cnic}`);
       return;

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import voterService from "../services/voterService";
+import uploadService from "../services/uploadService";
 
 export const registerVoter = createAsyncThunk(
   "voter/registerVoter",
@@ -36,18 +37,30 @@ export const voteCasting = createAsyncThunk(
     }
   }
 );
+export const uploadPicture = createAsyncThunk(
+  "voter/upload-picture",
+  async (payload, thunkAPI) => {
+    try {
+      const res = await uploadService.uploadFile(payload);
+      return thunkAPI.fulfillWithValue(res);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || error.toString();
+
+      // You can include metaData along with message in the reject value:
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 export const cnicVerification = createAsyncThunk(
   "voter/cnic-verification",
   async (payload, thunkAPI) => {
     try {
-      const res = await voterService.cnicVerification(payload);      
+      const res = await voterService.cnicVerification(payload);
       return thunkAPI.fulfillWithValue(res);
     } catch (error) {
       const message =
-        error.response?.data?.message ||
-        error.message ||
-        error.toString();
-
+        error.response?.data?.message || error.message || error.toString();
 
       // You can include metaData along with message in the reject value:
       return thunkAPI.rejectWithValue(message);
@@ -61,6 +74,7 @@ const initialState = {
   success: null,
   error: false,
   message: "",
+  pictureUrl: ""
 };
 
 const voterSlice = createSlice({
@@ -93,6 +107,18 @@ const voterSlice = createSlice({
         s.isLoading = false;
       })
       .addCase(voteCasting.rejected, (s, a) => {
+        s.isLoading = false;
+        s.error = a.error.message;
+      })
+      .addCase(uploadPicture.pending, (s) => {
+        s.isLoading = true;
+        s.error = null;
+      })
+      .addCase(uploadPicture.fulfilled, (s, a) => {
+        s.isLoading = false;
+        s.pictureUrl = a.payload;
+      })
+      .addCase(uploadPicture.rejected, (s, a) => {
         s.isLoading = false;
         s.error = a.error.message;
       })

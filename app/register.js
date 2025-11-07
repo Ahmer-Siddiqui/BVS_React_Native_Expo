@@ -1,72 +1,114 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import AppHeader from '../components/AppHeader';
-import ButtonPrimary from '../components/ButtonPrimary';
-import InputField from '../components/InputField';
-import * as ImagePicker from 'expo-image-picker';
-import { useDeviceId } from '../hooks/useDeviceId';
-import { useFingerprintAuth } from '../hooks/useFingerprintAuth';
-import voterService from '../services/voterService';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import Loader from '../components/Loader';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import AppHeader from "../components/AppHeader";
+import ButtonPrimary from "../components/ButtonPrimary";
+import InputField from "../components/InputField";
+import * as ImagePicker from "expo-image-picker";
+import { getDeviceId } from "../utils/deviceUtils";
+import { useFingerprintAuth } from "../hooks/useFingerprintAuth";
+import voterService from "../services/voterService";
+import { uploadPicture } from "../redux/voterSlice";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import Loader from "../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function RegisterScreen() {
   const { cnic } = useLocalSearchParams();
   const router = useRouter();
+  const { message, success, pictureUrl } = useSelector((state) => state.voter);
+  const dispatch = useDispatch();
   const [cnicImage, setCnicImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const deviceId = useDeviceId();
+  const deviceId = getDeviceId();
   const { authenticate } = useFingerprintAuth();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Camera roll permissions are required.');
+    if (status !== "granted") {
+      alert("Camera roll permissions are required.");
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.6, base64: true });
-    if (!result.cancelled) setCnicImage(result);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      quality: 0.6,
+      base64: false,
+    });
+    if (!result.canceled) setCnicImage(result.assets[0]);
   };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Camera permissions are required.');
+    if (status !== "granted") {
+      alert("Camera permissions are required.");
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({ quality: 0.6, base64: true });
-    if (!result.cancelled) setCnicImage(result);
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 0.6,
+      base64: false,
+    });
+    if (!result.canceled) setCnicImage(result.assets[0]);
   };
 
   const onRegister = async () => {
-    if (!cnic || cnic.length < 13) return alert('Invalid CNIC');
-    if (!cnicImage) return alert('Please add CNIC image');
-    const ok = await authenticate('Place your finger to register');
-    if (!ok) return alert('Fingerprint authentication failed');
+    if (!cnic || cnic.length < 15) return alert("Invalid CNIC");
+    if (!cnicImage) return alert("Please add CNIC image");
+
+    const ok = await authenticate("Place your finger to register");
+    if (!ok) return alert("Fingerprint authentication failed");
 
     try {
       setIsLoading(true);
-      // send base64 or file URL depending on backend
-      const payload = { cnicNumber: cnic, deviceId, cnicPicture: cnicImage.base64 ? `data:image/jpeg;base64,${cnicImage.base64}` : cnicImage.uri };
+      
+      // 🧩 1. Upload image first
+      if(!pictureUrl) return alert("Please select picture first");
+
+      // 🧩 2. Send registration payload
+      const payload = {
+        cnicNumber: cnic,
+        deviceId,
+        cnicPicture: pictureUrl,
+      };
+
       const res = await voterService.registerVoter(payload);
       setIsLoading(false);
-      alert(res?.message || 'Registered successfully');
+      alert(res?.message || "Registered successfully");
       router.push(`/candidates?cnic=${cnic}`);
     } catch (err) {
+      console.error("Registration error:", err);
       setIsLoading(false);
-      alert(err?.message || 'Registration failed');
+      alert(err?.message || "Registration failed");
     }
   };
+
+  useEffect(() => {
+    if (cnicImage) {
+      {
+        dispatch(
+          uploadPicture({
+            uri: cnicImage.uri,
+            fileDirName: "voter/cnics",
+          })
+        );
+      }
+    }
+  }, [cnicImage]);
 
   return (
     <View style={styles.container}>
       <AppHeader title="Register Voter" />
       <View style={styles.body}>
         <Text style={styles.info}>CNIC: {cnic}</Text>
-        {cnicImage ? <Image source={{ uri: cnicImage.uri }} style={styles.preview} /> : <Text>No CNIC image</Text>}
+        {cnicImage ? (
+          <Image source={{ uri: cnicImage.uri }} style={styles.preview} />
+        ) : (
+          <Text>No CNIC image</Text>
+        )}
         <View style={styles.row}>
-          <TouchableOpacity onPress={pickImage} style={styles.smallBtn}><Text>Select Image</Text></TouchableOpacity>
-          <TouchableOpacity onPress={takePhoto} style={styles.smallBtn}><Text>Take Photo</Text></TouchableOpacity>
+          <TouchableOpacity onPress={pickImage} style={styles.smallBtn}>
+            <Text>Select Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={takePhoto} style={styles.smallBtn}>
+            <Text>Take Photo</Text>
+          </TouchableOpacity>
         </View>
         <ButtonPrimary title="Register (Fingerprint)" onPress={onRegister} />
         {isLoading && <Loader />}
@@ -76,10 +118,10 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: "#fff" },
   body: { padding: 20 },
   info: { marginBottom: 12 },
-  preview: { width: 240, height: 160, resizeMode: 'cover', marginBottom: 12 },
-  row: { flexDirection: 'row', gap: 12, marginVertical: 12 },
-  smallBtn: { padding: 10, borderWidth: 1, borderRadius: 8, marginRight: 8 }
+  preview: { width: 240, height: 160, resizeMode: "cover", marginBottom: 12 },
+  row: { flexDirection: "row", gap: 12, marginVertical: 12 },
+  smallBtn: { padding: 10, borderWidth: 1, borderRadius: 8, marginRight: 8 },
 });
