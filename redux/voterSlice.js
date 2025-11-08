@@ -7,7 +7,7 @@ export const registerVoter = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const res = await voterService.registerVoter(payload);
-      return thunkAPI.fulfillWithValue(res);
+      return thunkAPI.fulfillWithValue(res?.data);
     } catch (error) {
       const message =
         (error.response &&
@@ -57,13 +57,14 @@ export const cnicVerification = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const res = await voterService.cnicVerification(payload);
-      return thunkAPI.fulfillWithValue(res);
+      return thunkAPI.fulfillWithValue(res?.data);
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || error.toString();
+      const metaData = error.response?.data?.metaData || null;
 
       // You can include metaData along with message in the reject value:
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue({ message, metaData });
     }
   }
 );
@@ -74,7 +75,8 @@ const initialState = {
   success: null,
   error: false,
   message: "",
-  pictureUrl: ""
+  pictureUrl: "",
+  metaData: ""
 };
 
 const voterSlice = createSlice({
@@ -134,7 +136,8 @@ const voterSlice = createSlice({
         s.isLoading = false;
       })
       .addCase(cnicVerification.rejected, (s, a) => {
-        s.message = a.payload;
+        s.message = a.payload?.message;
+        s.metaData = a.payload?.metaData;
         s.success = false;
         s.isLoading = false;
         s.error = true;

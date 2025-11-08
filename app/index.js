@@ -17,7 +17,9 @@ import { getDeviceId } from "../utils/deviceUtils";
 export default function HomeScreen() {
   const [cnic, setCnic] = useState("");
   const router = useRouter();
-  const { voter, success, message } = useSelector((state) => state.voter);
+  const { voter, success, message, metaData } = useSelector(
+    (state) => state.voter
+  );
   const dispatch = useDispatch();
   const deviceId = getDeviceId();
 
@@ -32,20 +34,21 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    if (!success && message) alert(message);
+    if (voter?._id) router.push(`/candidates?cnic=${cnic}`);
 
-    if (message?.includes("already") && message?.includes("cast")) {
+    if (!metaData && message) return alert(message);
+
+    if (metaData && !metaData?.voterVerification?.deviceId) {
+       alert(`${message}`);
+      router.push(`/register?cnic=${cnic}`);
+      return;
+    }
+    if (metaData && metaData?.voterVerification?.IsVoted) {
       alert(`${message}`);
       router.push(`/success?message=${message}`);
       return;
     }
-    if (message?.includes("register") && !success) {
-      alert(`${message}`);
-      router.push(`/register?cnic=${cnic}`);
-      return;
-    }
-    if (voter?._id) router.push(`/candidates?cnic=${cnic}`);
-  }, [voter, success, message]);
+  }, [voter, success, message, metaData]);
 
   return (
     <KeyboardAvoidingView

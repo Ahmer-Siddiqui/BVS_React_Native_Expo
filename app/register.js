@@ -47,7 +47,6 @@ export default function RegisterScreen() {
     });
     if (!result.canceled) setCnicImage(result.assets[0]);
   };
-
   const onRegister = async () => {
     if (!cnic || cnic.length < 15) return alert("Invalid CNIC");
     if (!cnicImage) return alert("Please add CNIC image");
@@ -57,9 +56,8 @@ export default function RegisterScreen() {
 
     try {
       setIsLoading(true);
-      
       // 🧩 1. Upload image first
-      if(!pictureUrl) return alert("Please select picture first");
+      if (!pictureUrl) return alert("Please select picture first");
 
       // 🧩 2. Send registration payload
       const payload = {
