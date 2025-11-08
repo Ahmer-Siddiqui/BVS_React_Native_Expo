@@ -48,7 +48,10 @@ export default function RegisterScreen() {
     if (!result.canceled) setCnicImage(result.assets[0]);
   };
   const onRegister = async () => {
-    if (!cnic || cnic.length < 15) return alert("Invalid CNIC");
+    if (!cnic || cnic.length < 15)  {
+      alert("CNIC is required");
+      return router.push('/');
+    };
     if (!cnicImage) return alert("Please add CNIC image");
 
     const ok = await authenticate("Place your finger to register");

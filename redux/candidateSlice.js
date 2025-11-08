@@ -6,7 +6,7 @@ export const fetchCandidates = createAsyncThunk(
   async (cnic, thunkAPI) => {
     try {
       const res = await candidateService.getCandidates(cnic);
-      return thunkAPI.fulfillWithValue(res);
+      return thunkAPI.fulfillWithValue(res?.data);
     } catch (error) {
       const message =
         (error.response &&

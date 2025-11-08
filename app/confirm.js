@@ -20,6 +20,11 @@ export default function ConfirmScreen() {
     const ok = await authenticate('Authenticate to cast your vote');
     if (!ok) return alert('Fingerprint failed');
     try {
+      if (!cnic || cnic.length !== 15) {
+        alert("Cnic number is required")
+        router.push('/');
+        return;
+      }
       setIsLoading(true);
       const payload = { cnicNumber: cnic, deviceId, candidates: [na, pp] };
       const res = await voterService.voteCasting(payload);

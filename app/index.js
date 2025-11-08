@@ -34,12 +34,15 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    if (voter?._id) router.push(`/candidates?cnic=${cnic}`);
+    if (voter?._id) return router.push(`/candidates?cnic=${cnic}`);
 
     if (!metaData && message) return alert(message);
 
+    if (metaData && !metaData?.canVote)
+      return alert("You are not eligible to vote.");
+
     if (metaData && !metaData?.voterVerification?.deviceId) {
-       alert(`${message}`);
+      alert(`${message}`);
       router.push(`/register?cnic=${cnic}`);
       return;
     }

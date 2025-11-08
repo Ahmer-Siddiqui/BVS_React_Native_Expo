@@ -19,7 +19,7 @@ export default function CandidatesScreen() {
   const [selection, setSelection] = useState({ NA: null, PP: null });
 
   useEffect(() => {
-    if (!cnic) return;
+    if (!cnic) return router.push('/');
     dispatch(fetchCandidates(cnic));
   }, [cnic]);
 
@@ -30,7 +30,7 @@ export default function CandidatesScreen() {
       return copy;
     });
   };
-
+  
   const onConfirm = () => {
     // must select one NA and one PP
     if (!selection.NA || !selection.PP)
