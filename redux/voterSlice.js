@@ -115,7 +115,7 @@ const voterSlice = createSlice({
       })
       .addCase(uploadPicture.pending, (s) => {
         s.isLoading = true;
-        s.error = null;
+        s.error = false;
       })
       .addCase(uploadPicture.fulfilled, (s, a) => {
         s.isLoading = false;
@@ -123,7 +123,8 @@ const voterSlice = createSlice({
       })
       .addCase(uploadPicture.rejected, (s, a) => {
         s.isLoading = false;
-        s.error = a.error.message;
+        s.error = true;
+        s.message = a.payload;
       })
       .addCase(cnicVerification.pending, (s) => {
         s.isLoading = true;

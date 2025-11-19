@@ -15,7 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 export default function RegisterScreen() {
   const { cnic } = useLocalSearchParams();
   const router = useRouter();
-  const { message, success, pictureUrl } = useSelector((state) => state.voter);
+  const { message, success, pictureUrl, error } = useSelector(
+    (state) => state.voter
+  );
   const dispatch = useDispatch();
   const [cnicImage, setCnicImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,10 +26,9 @@ export default function RegisterScreen() {
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert("Camera roll permissions are required.");
-      return;
-    }
+    if (status !== "granted")
+      return alert("Camera roll permissions are required.");
+
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 0.6,
       base64: false,
@@ -80,6 +81,10 @@ export default function RegisterScreen() {
     }
   };
 
+  useEffect(() => {
+    if (error && message) alert(message);
+  }, [error, message]);
+  
   useEffect(() => {
     if (cnicImage) {
       dispatch(
