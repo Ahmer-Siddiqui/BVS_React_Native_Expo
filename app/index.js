@@ -11,7 +11,7 @@ import InputField from "../components/InputField";
 import ButtonPrimary from "../components/ButtonPrimary";
 import AppHeader from "../components/AppHeader";
 import { useDispatch, useSelector } from "react-redux";
-import { cnicVerification } from "../redux/voterSlice";
+import { cnicVerification, resetVoter } from "../redux/voterSlice";
 import { getDeviceId } from "../utils/deviceUtils";
 
 export default function HomeScreen() {
@@ -24,13 +24,33 @@ export default function HomeScreen() {
   const deviceId = getDeviceId();
 
   const onCheck = () => {
-    // navigate to candidates screen which will call API
-    if (!cnic || cnic.length < 15) {
-      alert("Please enter a valid 15-digit CNIC number like 11111-1111111-1");
-      return;
-    }
+    if (!isValidCnic(cnic)) return alert("Please enter a valid CNIC like 42101-000000-5");
+    
+
     const cnicNumber = cnic;
+    dispatch(resetVoter());
     dispatch(cnicVerification({ cnicNumber, deviceId }));
+  };
+
+  const formatCnic = (value) => {
+    // remove any non-digit
+    let digits = value.replace(/\D/g, "");
+
+    // apply formatting: 5 - 7 - 1
+    let formatted = digits;
+
+    if (digits.length > 5) {
+      formatted = digits.slice(0, 5) + "-" + digits.slice(5);
+    }
+    if (digits.length > 12) {
+      formatted = formatted.slice(0, 13) + "-" + formatted.slice(13);
+    }
+
+    return formatted;
+  };
+
+  const isValidCnic = (value) => {
+    return /^\d{5}-\d{7}-\d{1}$/.test(value);
   };
 
   useEffect(() => {
@@ -51,7 +71,7 @@ export default function HomeScreen() {
       router.push(`/success?message=${message}`);
       return;
     }
-  }, [voter, success, message, metaData]);
+  }, [voter, success, message, metaData, dispatch]);
 
   return (
     <KeyboardAvoidingView
@@ -63,8 +83,8 @@ export default function HomeScreen() {
         <Text style={styles.label}>Enter CNIC Number</Text>
         <InputField
           value={cnic}
-          onChangeText={setCnic}
-          placeholder="e.g. 1234512345671"
+          onChangeText={(text) => setCnic(formatCnic(text))}
+          placeholder="e.g. 42101-9999999-0"
           keyboardType="numeric"
         />
         <ButtonPrimary title="Check Registration" onPress={onCheck} />

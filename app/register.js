@@ -48,10 +48,10 @@ export default function RegisterScreen() {
     if (!result.canceled) setCnicImage(result.assets[0]);
   };
   const onRegister = async () => {
-    if (!cnic || cnic.length < 15)  {
+    if (!cnic || cnic.length < 15) {
       alert("CNIC is required");
-      return router.push('/');
-    };
+      return router.push("/");
+    }
     if (!cnicImage) return alert("Please add CNIC image");
 
     const ok = await authenticate("Place your finger to register");
@@ -82,14 +82,12 @@ export default function RegisterScreen() {
 
   useEffect(() => {
     if (cnicImage) {
-      {
-        dispatch(
-          uploadPicture({
-            uri: cnicImage.uri,
-            fileDirName: "voter/cnics",
-          })
-        );
-      }
+      dispatch(
+        uploadPicture({
+          uri: cnicImage.uri,
+          fileDirName: "voter/cnics",
+        })
+      );
     }
   }, [cnicImage]);
 

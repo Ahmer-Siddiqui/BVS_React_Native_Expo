@@ -76,7 +76,7 @@ const initialState = {
   error: false,
   message: "",
   pictureUrl: "",
-  metaData: ""
+  metaData: "",
 };
 
 const voterSlice = createSlice({
@@ -86,6 +86,7 @@ const voterSlice = createSlice({
     setVoter(state, action) {
       state.current = action.payload;
     },
+    resetVoter: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -145,5 +146,5 @@ const voterSlice = createSlice({
   },
 });
 
-export const { setVoter } = voterSlice.actions;
+export const { setVoter, resetVoter } = voterSlice.actions;
 export default voterSlice.reducer;
