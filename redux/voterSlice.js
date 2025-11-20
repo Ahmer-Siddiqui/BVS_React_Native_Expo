@@ -19,13 +19,12 @@ export const registerVoter = createAsyncThunk(
     }
   }
 );
-
 export const voteCasting = createAsyncThunk(
   "voter/voteCasting",
   async (payload, thunkAPI) => {
     try {
       const res = await voterService.voteCasting(payload);
-      return thunkAPI.fulfillWithValue(res);
+      return thunkAPI.fulfillWithValue(res.data);
     } catch (error) {
       const message =
         (error.response &&
@@ -104,14 +103,20 @@ const voterSlice = createSlice({
       })
       .addCase(voteCasting.pending, (s) => {
         s.isLoading = true;
-        s.error = null;
+        s.success = false;
+        s.error = false;
+        s.message = "";
       })
       .addCase(voteCasting.fulfilled, (s, a) => {
         s.isLoading = false;
+        s.success = true;
+        s.message = a.payload?.message
       })
       .addCase(voteCasting.rejected, (s, a) => {
         s.isLoading = false;
-        s.error = a.error.message;
+        s.success = false;
+        s.message = a.payload;
+        s.error = true;
       })
       .addCase(uploadPicture.pending, (s) => {
         s.isLoading = true;

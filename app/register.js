@@ -82,7 +82,7 @@ export default function RegisterScreen() {
   };
 
   useEffect(() => {
-    if (error && message) alert(message);
+    if ((error || !success) && message) alert(message);
   }, [error, message]);
   
   useEffect(() => {
