@@ -5,7 +5,7 @@ import ButtonPrimary from "../components/ButtonPrimary";
 import Loader from "../components/Loader";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useFingerprintAuth } from "../hooks/useFingerprintAuth";
-import { voteCasting } from "../redux/voterSlice";
+import { resetValue, voteCasting } from "../redux/voterSlice";
 import { getDeviceId } from "../utils/deviceUtils";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -34,9 +34,15 @@ export default function ConfirmScreen() {
 
     dispatch(voteCasting(payload));
   };
+
+  useEffect(() => {
+    dispatch(resetValue());
+  }, []);
+
   useEffect(() => {
     if ((error || !success) && message) return alert(message);
   }, [success, message, error]);
+
   useEffect(() => {
     if ((success, isAuthenticate)) {
       router.push("/success");

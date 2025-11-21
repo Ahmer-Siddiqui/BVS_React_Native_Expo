@@ -5,6 +5,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import InputField from "../components/InputField";
@@ -24,7 +25,8 @@ export default function HomeScreen() {
   const deviceId = getDeviceId();
 
   const onCheck = () => {
-    if (!isValidCnic(cnic)) return alert("Please enter a valid CNIC like 42101-000000-5");
+    if (!isValidCnic(cnic))
+      return alert("Please enter a valid CNIC like 42101-000000-5");
     const cnicNumber = cnic;
     dispatch(resetVoter());
     dispatch(cnicVerification({ cnicNumber, deviceId }));
@@ -50,6 +52,9 @@ export default function HomeScreen() {
   const isValidCnic = (value) => {
     return /^\d{5}-\d{7}-\d{1}$/.test(value);
   };
+  useEffect(() => {
+    dispatch(resetVoter());
+  }, []);
 
   useEffect(() => {
     if (voter?._id) return router.push(`/candidates?cnic=${cnic}`);
@@ -60,8 +65,14 @@ export default function HomeScreen() {
       return alert("You are not eligible to vote.");
 
     if (metaData && !metaData?.voterVerification?.deviceId) {
-      alert(`${message}`);
-      router.push(`/register?cnic=${cnic}`);
+      Alert.alert("Alert", message, [
+        {
+          text: "OK",
+          onPress: () => {
+            router.push(`/register?cnic=${cnic}`);
+          },
+        },
+      ]);
       return;
     }
     if (metaData && metaData?.voterVerification?.IsVoted) {

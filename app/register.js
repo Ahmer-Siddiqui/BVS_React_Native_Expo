@@ -7,7 +7,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getDeviceId } from "../utils/deviceUtils";
 import { useFingerprintAuth } from "../hooks/useFingerprintAuth";
 import voterService from "../services/voterService";
-import { uploadPicture } from "../redux/voterSlice";
+import { resetValue, uploadPicture } from "../redux/voterSlice";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Loader from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
@@ -72,19 +72,13 @@ export default function RegisterScreen() {
 
       const res = await voterService.registerVoter(payload);
       setIsLoading(false);
-      alert(res?.message || "Registered successfully");
-      router.push(`/candidates?cnic=${cnic}`);
+      router.push(`/`);
     } catch (err) {
       console.error("Registration error:", err);
       setIsLoading(false);
-      alert(err?.message || "Registration failed");
     }
   };
 
-  useEffect(() => {
-    if ((error || !success) && message) alert(message);
-  }, [error, message]);
-  
   useEffect(() => {
     if (cnicImage) {
       dispatch(

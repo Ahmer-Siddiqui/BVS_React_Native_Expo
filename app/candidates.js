@@ -8,6 +8,8 @@ import candidateService from "../services/candidateService";
 import { fetchCandidates } from "../redux/candidateSlice";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useDispatch, useSelector } from "react-redux";
+import { resetValue } from "../redux/voterSlice";
+import { validateVoter } from "../utils/helpers";
 
 export default function CandidatesScreen() {
   const { cnic } = useLocalSearchParams();
@@ -18,11 +20,6 @@ export default function CandidatesScreen() {
   const router = useRouter();
   const [selection, setSelection] = useState({ NA: null, PP: null });
 
-  useEffect(() => {
-    if (!cnic) return router.push('/');
-    dispatch(fetchCandidates(cnic));
-  }, [cnic]);
-
   const toggleSelect = (item) => {
     setSelection((prev) => {
       const copy = { ...prev };
@@ -30,7 +27,7 @@ export default function CandidatesScreen() {
       return copy;
     });
   };
-  
+
   const onConfirm = () => {
     // must select one NA and one PP
     if (!selection.NA || !selection.PP)
@@ -43,6 +40,20 @@ export default function CandidatesScreen() {
     }).toString();
     router.push(`/confirm?${params}`);
   };
+
+  useEffect(()=>{
+    validateVoter()
+  })
+
+  useEffect(() => {
+    dispatch(resetValue());
+  }, []);
+
+  useEffect(() => {
+    if (!cnic) return router.push("/");
+    dispatch(fetchCandidates(cnic));
+  }, [cnic]);
+
   useEffect(() => {
     if (message && !success) alert(`${message}`);
   }, [success, message]);

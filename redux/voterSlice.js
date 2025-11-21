@@ -71,7 +71,7 @@ export const cnicVerification = createAsyncThunk(
 const initialState = {
   voter: {},
   isLoading: false,
-  success: null,
+  success: false,
   error: false,
   message: "",
   pictureUrl: "",
@@ -86,20 +86,30 @@ const voterSlice = createSlice({
       state.current = action.payload;
     },
     resetVoter: () => initialState,
+    resetValue: (state) => {
+      state.error = false;
+      state.success = false;
+      state.message = "";
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(registerVoter.pending, (s) => {
         s.isLoading = true;
-        s.error = null;
+        s.error = false;
+        s.success = false;
+        s.message = "";
       })
       .addCase(registerVoter.fulfilled, (s, a) => {
         s.isLoading = false;
         s.current = a.payload;
+        s.success = true;
       })
       .addCase(registerVoter.rejected, (s, a) => {
         s.isLoading = false;
-        s.error = a.error.message;
+        s.success = false;
+        s.error = false;
+        s.message = a.payload;
       })
       .addCase(voteCasting.pending, (s) => {
         s.isLoading = true;
@@ -110,7 +120,7 @@ const voterSlice = createSlice({
       .addCase(voteCasting.fulfilled, (s, a) => {
         s.isLoading = false;
         s.success = true;
-        s.message = a.payload?.message
+        s.message = a.payload?.message;
       })
       .addCase(voteCasting.rejected, (s, a) => {
         s.isLoading = false;
@@ -121,6 +131,7 @@ const voterSlice = createSlice({
       .addCase(uploadPicture.pending, (s) => {
         s.isLoading = true;
         s.error = false;
+        s.message = "";
       })
       .addCase(uploadPicture.fulfilled, (s, a) => {
         s.isLoading = false;
@@ -135,6 +146,7 @@ const voterSlice = createSlice({
         s.isLoading = true;
         s.error = false;
         s.success = false;
+        s.message = "";
       })
       .addCase(cnicVerification.fulfilled, (s, a) => {
         s.voter = a.payload?.data;
@@ -152,5 +164,5 @@ const voterSlice = createSlice({
   },
 });
 
-export const { setVoter, resetVoter } = voterSlice.actions;
+export const { setVoter, resetVoter, resetValue } = voterSlice.actions;
 export default voterSlice.reducer;
