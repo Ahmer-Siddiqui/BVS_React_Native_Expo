@@ -5,6 +5,5 @@ export const validateCnic = (cnic) => {
 };
 
 export const validateVoter = (voter) => {
-  const router = useRouter();
   if (!voter?.canVote || voter?.IsVoted) return router.push("/");
 };

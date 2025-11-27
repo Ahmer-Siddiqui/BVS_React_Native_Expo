@@ -41,9 +41,9 @@ export default function CandidatesScreen() {
     router.push(`/confirm?${params}`);
   };
 
-  useEffect(()=>{
-    validateVoter()
-  })
+  // useEffect(()=>{
+  //   validateVoter()
+  // })
 
   useEffect(() => {
     dispatch(resetValue());
