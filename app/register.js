@@ -60,6 +60,8 @@ export default function RegisterScreen() {
     try {
       setIsLoading(true);
       // 🧩 1. Upload image first
+      if (cnicImage && !pictureUrl)
+        return alert("Image is uploading, please wait...");
       if (!pictureUrl) return alert("Please select picture first");
 
       // 🧩 2. Send registration payload

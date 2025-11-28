@@ -26,7 +26,7 @@ export default function HomeScreen() {
 
   const onCheck = () => {
     if (!isValidCnic(cnic))
-      return alert("Please enter a valid CNIC like 42101-000000-5");
+      return alert("Please enter a valid CNIC like 42101-0000000-5");
     const cnicNumber = cnic;
     dispatch(resetVoter());
     dispatch(cnicVerification({ cnicNumber, deviceId }));

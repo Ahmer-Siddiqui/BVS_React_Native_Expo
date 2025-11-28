@@ -44,7 +44,7 @@ export default function ConfirmScreen() {
   }, [success, message, error]);
 
   useEffect(() => {
-    if ((success, isAuthenticate)) {
+    if (success && isAuthenticate) {
       router.push("/success");
       return;
     }
