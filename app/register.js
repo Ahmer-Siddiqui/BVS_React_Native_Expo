@@ -102,14 +102,14 @@ export default function RegisterScreen() {
           <Text>No CNIC image</Text>
         )}
         <View style={styles.row}>
-          <TouchableOpacity onPress={pickImage} style={styles.smallBtn}>
+          <TouchableOpacity onPress={() => pickImage()} style={styles.smallBtn}>
             <Text>Select Image</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={takePhoto} style={styles.smallBtn}>
+          <TouchableOpacity onPress={() => takePhoto()} style={styles.smallBtn}>
             <Text>Take Photo</Text>
           </TouchableOpacity>
         </View>
-        <ButtonPrimary title="Register (Fingerprint)" onPress={onRegister} />
+        <ButtonPrimary title="Register (Fingerprint)" onPress={() => onRegister()} />
         {isLoading && <Loader />}
       </View>
     </View>

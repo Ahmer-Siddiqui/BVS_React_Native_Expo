@@ -69,6 +69,7 @@ export default function HomeScreen() {
         {
           text: "OK",
           onPress: () => {
+            dispatch(resetVoter());
             router.push(`/register?cnic=${cnic}`);
           },
         },
@@ -96,7 +97,7 @@ export default function HomeScreen() {
           placeholder="e.g. 42101-9999999-0"
           keyboardType="numeric"
         />
-        <ButtonPrimary title="Check Registration" onPress={onCheck} />
+        <ButtonPrimary title="Check Registration" onPress={() => onCheck()} />
       </View>
     </KeyboardAvoidingView>
   );
