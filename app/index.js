@@ -62,7 +62,7 @@ export default function HomeScreen() {
     if (!metaData && message) return alert(message);
 
     if (metaData && !metaData?.canVote)
-      return alert("You are not eligible to vote.");
+      return alert("You are not eligible to vote.Wait for polling officer approval");
 
     if (metaData && !metaData?.voterVerification?.deviceId) {
       Alert.alert("Alert", message, [
