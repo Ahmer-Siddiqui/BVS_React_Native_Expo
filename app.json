@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "BVS_React_Native_Expo",
-    "slug": "BVS_React_Native_Expo",
+    "name": "Blockchain Voting System",
+    "slug": "blockchain-voting-system",
+    "scheme": "blockchain-voting-system",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

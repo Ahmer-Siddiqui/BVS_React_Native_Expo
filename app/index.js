@@ -57,12 +57,23 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (voter?._id) return router.push(`/candidates?cnic=${cnic}`);
+    if (voter?._id) {
+      router.push(`/candidates?cnic=${cnic}`);
+      return;
+    }
 
-    if (!metaData && message) return alert(message);
+    if (!metaData && message) {
+      Alert.alert("Notice", message);
+      return;
+    }
 
-    if (metaData && !metaData?.canVote)
-      return alert("You are not eligible to vote.Wait for polling officer approval");
+    if (metaData && !metaData?.canVote) {
+      Alert.alert(
+        "Notice",
+        "You are not eligible to vote. Wait for polling officer approval"
+      );
+      return;
+    }
 
     if (metaData && !metaData?.voterVerification?.deviceId) {
       Alert.alert("Alert", message, [
@@ -77,11 +88,11 @@ export default function HomeScreen() {
       return;
     }
     if (metaData && metaData?.voterVerification?.IsVoted) {
-      alert(`${message}`);
+      Alert.alert("Notice", message);
       router.push(`/success?message=${message}`);
       return;
     }
-  }, [voter, success, message, metaData, dispatch]);
+  }, [voter, success, message, metaData, dispatch, router, cnic]);
 
   return (
     <KeyboardAvoidingView
