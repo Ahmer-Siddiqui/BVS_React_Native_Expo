@@ -67,14 +67,6 @@ export default function HomeScreen() {
       return;
     }
 
-    if (metaData && !metaData?.canVote) {
-      Alert.alert(
-        "Notice",
-        "You are not eligible to vote. Wait for polling officer approval"
-      );
-      return;
-    }
-
     if (metaData && !metaData?.voterVerification?.deviceId) {
       Alert.alert("Alert", message, [
         {
@@ -85,6 +77,14 @@ export default function HomeScreen() {
           },
         },
       ]);
+      return;
+    }
+
+    if (metaData && !metaData?.canVote) {
+      Alert.alert(
+        "Notice",
+        "You are not eligible to vote. Wait for polling officer approval"
+      );
       return;
     }
     if (metaData && metaData?.voterVerification?.IsVoted) {
