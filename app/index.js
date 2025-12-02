@@ -21,12 +21,16 @@ export default function HomeScreen() {
   const { voter, success, message, metaData } = useSelector(
     (state) => state.voter
   );
+  const [alertShown, setAlertShown] = useState(false);
   const dispatch = useDispatch();
   const deviceId = getDeviceId();
 
   const onCheck = () => {
     if (!isValidCnic(cnic))
       return alert("Please enter a valid CNIC like 42101-0000000-5");
+
+    setAlertShown(false);  // reset so new result can show alert
+
     const cnicNumber = cnic;
     dispatch(resetVoter());
     dispatch(cnicVerification({ cnicNumber, deviceId }));
@@ -57,42 +61,55 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (voter?._id) {
-      router.push(`/candidates?cnic=${cnic}`);
-      return;
-    }
+  if (alertShown) return; // Prevent showing alerts multiple times
 
-    if (!metaData && message) {
-      Alert.alert("Notice", message);
-      return;
-    }
+  // if voter found…
+  if (voter?._id) {
+    setAlertShown(true);
+    router.push(`/candidates?cnic=${cnic}`);
+    return;
+  }
 
-    if (metaData && !metaData?.voterVerification?.deviceId) {
-      Alert.alert("Alert", message, [
-        {
-          text: "OK",
-          onPress: () => {
-            dispatch(resetVoter());
-            router.push(`/register?cnic=${cnic}`);
-          },
+  // voter NOT found
+  if (!metaData && message) {
+    setAlertShown(true);
+    Alert.alert("Notice", message);
+    return;
+  }
+
+  // new voter registration
+  if (metaData && !metaData?.voterVerification?.deviceId) {
+    setAlertShown(true);
+    Alert.alert("Alert", message, [
+      {
+        text: "OK",
+        onPress: () => {
+          dispatch(resetVoter());
+          router.push(`/register?cnic=${cnic}`);
         },
-      ]);
-      return;
-    }
+      },
+    ]);
+    return;
+  }
 
-    if (metaData && !metaData?.canVote) {
-      Alert.alert(
-        "Notice",
-        "You are not eligible to vote. Wait for polling officer approval"
-      );
-      return;
-    }
-    if (metaData && metaData?.voterVerification?.IsVoted) {
-      Alert.alert("Notice", message);
-      router.push(`/success?message=${message}`);
-      return;
-    }
-  }, [voter, success, message, metaData, dispatch, router, cnic]);
+  // not eligible
+  if (metaData && !metaData?.canVote) {
+    setAlertShown(true);
+    Alert.alert(
+      "Notice",
+      "You are not eligible to vote. Wait for polling officer approval"
+    );
+    return;
+  }
+
+  // already voted
+  if (metaData && metaData?.voterVerification?.IsVoted) {
+    setAlertShown(true);
+    Alert.alert("Notice", message);
+    router.push(`/success?message=${message}`);
+    return;
+  }
+}, [voter, success, message, metaData, dispatch, router, cnic, alertShown]);
 
   return (
     <KeyboardAvoidingView
