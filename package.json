@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "eas build --platform android --local"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.10.1",
@@ -14,6 +15,7 @@
     "expo": "^54.0.25",
     "expo-device": "^8.0.9",
     "expo-image-picker": "~17.0.8",
+    "expo-linear-gradient": "^15.0.8",
     "expo-local-authentication": "^17.0.7",
     "expo-router": "~6.0.15",
     "expo-status-bar": "~3.0.8",

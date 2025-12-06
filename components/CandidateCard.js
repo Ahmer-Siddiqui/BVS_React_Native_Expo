@@ -1,31 +1,56 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 
 export default function CandidateCard({ item, onPress, selected }) {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.card, selected && styles.selected]}>
+    <TouchableOpacity 
+      onPress={onPress} 
+      style={[
+        styles.card, 
+        selected && styles.selected
+      ]}
+      activeOpacity={0.7}
+    >
       <View style={styles.container}>
         {/* Left Section - Candidate Details */}
         <View style={styles.left}>
-          <Text style={styles.name}>
-            {item?.userId ? `${item.userId.firstName} ${item.userId.lastName}` : 'Unknown'}
-          </Text>
-          <Text style={styles.party}>{item.party || 'Independent'}</Text>
-          <Text style={styles.position}>{item.position}</Text>
+          <View style={styles.nameRow}>
+            <Text style={styles.name}>
+              {item?.userId ? `${item.userId.firstName} ${item.userId.lastName}` : 'Unknown'}
+            </Text>
+            {selected && (
+              <View style={styles.checkmarkContainer}>
+                <Ionicons name="checkmark-circle" size={24} color={COLORS.success} />
+              </View>
+            )}
+          </View>
+          
+          <View style={styles.detailsRow}>
+            <Ionicons name="people" size={14} color={COLORS.textSecondary} />
+            <Text style={styles.party}>{item.party || 'Independent'}</Text>
+          </View>
+          
+          <View style={styles.positionBadge}>
+            <Text style={styles.positionText}>{item.position}</Text>
+          </View>
         </View>
 
         {/* Right Section - Party Symbol */}
-        {item.symbol ? (
-          <Image
-            source={{ uri: item.symbol }}
-            style={styles.symbol}
-            resizeMode="contain"
-          />
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>No Logo</Text>
-          </View>
-        )}
+        <View style={styles.symbolContainer}>
+          {item.symbol ? (
+            <Image
+              source={{ uri: item.symbol }}
+              style={styles.symbol}
+              resizeMode="contain"
+            />
+          ) : (
+            <View style={styles.placeholder}>
+              <Ionicons name="image-outline" size={24} color={COLORS.textTertiary} />
+            </View>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -33,56 +58,87 @@ export default function CandidateCard({ item, onPress, selected }) {
 
 const styles = StyleSheet.create({
   card: {
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#eee',
-    marginBottom: 8,
-    backgroundColor: '#fff'
+    backgroundColor: COLORS.surface,
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.md,
+    ...SHADOWS.sm,
   },
   selected: {
-    borderColor: '#0a7cff',
-    backgroundColor: '#eef6ff'
+    borderColor: COLORS.success,
+    backgroundColor: '#F0FDF4', // Light green tint
+    ...SHADOWS.md,
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   left: {
     flex: 1,
-    paddingRight: 10
+    paddingRight: SPACING.md,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.xs,
   },
   name: {
-    fontWeight: '600',
-    fontSize: 16
+    fontWeight: TYPOGRAPHY.fontWeight.bold,
+    fontSize: TYPOGRAPHY.fontSize.lg,
+    color: COLORS.textPrimary,
+    flex: 1,
+  },
+  checkmarkContainer: {
+    marginLeft: SPACING.sm,
+  },
+  detailsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
   },
   party: {
-    color: '#666',
-    marginTop: 2
+    color: COLORS.textSecondary,
+    fontSize: TYPOGRAPHY.fontSize.sm,
+    marginLeft: SPACING.xs,
+    fontWeight: TYPOGRAPHY.fontWeight.medium,
   },
-  position: {
-    marginTop: 6,
-    fontSize: 12,
-    color: '#333'
+  positionBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs / 2,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  positionText: {
+    fontSize: TYPOGRAPHY.fontSize.xs,
+    color: COLORS.textInverse,
+    fontWeight: TYPOGRAPHY.fontWeight.semibold,
+  },
+  symbolContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   symbol: {
-    width: 50,
-    height: 50,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#ddd'
+    width: 70,
+    height: 70,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
   },
   placeholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 6,
-    backgroundColor: '#f2f2f2',
+    width: 70,
+    height: 70,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.background,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    borderStyle: 'dashed',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  placeholderText: {
-    fontSize: 10,
-    color: '#aaa'
-  }
 });
